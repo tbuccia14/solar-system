@@ -1,0 +1,74 @@
+name: Solar System Workflow
+
+on: 
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+            - 'feature/*'
+
+env:
+  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+
+jobs:
+    unit-testing:
+        name: Unit Testing
+        strategy:
+            matrix:
+                nodejs_version: [18, 20]
+                os: [ubuntu-latest, macos-latest]
+                exclude:
+                    - nodejs_version: 18
+                      os: macos-latest
+        runs-on: ${{ matrix.os }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Setup NodeJS version - ${{ matrix.nodejs_version }}
+              uses: actions/setup-node@v3
+              with:
+                node-version: ${{ matrix.nodejs_version }}
+            - name: Chace NPM dependencies
+              uses: actions/cache@v3
+              with:
+                path: node_modules
+                key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - name: Install dependencies
+              run: npm install
+            - name: Unit testing
+              id: nodejs-unit-testing
+              run: npm test
+            - name: Archive test results
+              if: always()
+              uses: actions/upload-artifact@v3
+              with:
+                name: Mocha-Test-Result
+                path: test-results.xml
+    code-coverage:
+        name: Code Coverage
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Setup NodeJS version - 18
+              uses: actions/setup-node@v3
+              with:
+                node-version: 18
+            - name: Chace NPM dependencies
+              uses: actions/cache@v3
+              with:
+                path: node_modules
+                key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - name: Install dependencies
+              run: npm install
+            - name: Check code coverage
+              continue-on-error: true
+              run: npm run coverage
+            - name: Archive code coverage results
+              uses: actions/upload-artifact@v3
+              with:
+                name: Code-Coverage-Result
+                path: coverage
+                retention-days: 5
