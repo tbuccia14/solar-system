@@ -23,8 +23,8 @@ jobs:
                     - nodejs_version: 18
                       os: macos-latest
         runs-on: ${{ matrix.os }}
-        container:
-          image: ghcr.io/node-and-packages:20
+        # container:
+        #   image: ghcr.io/node-and-packages:20
         services:
           mongodb:
             image: siddharth67/mongo-db:non-prod
