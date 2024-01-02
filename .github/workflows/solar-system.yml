@@ -149,6 +149,9 @@ jobs:
       outputs:
         APP_INGRESS_URL: ${{ steps.set-ingress-host-address.outputs.APP_INGRESS_HOST }}
       runs-on: ubuntu-latest
+      environment:
+        name: development
+        url: https://${{ steps.set-ingress-host-address.outputs.APP_INGRESS_HOST }}
       steps:
         - name: Checkout repository
           uses: actions/checkout@v4
