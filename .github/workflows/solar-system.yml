@@ -173,6 +173,10 @@ jobs:
       if: github.ref == 'ref/heads/main'
       needs: docker #dev-integration-test
       uses: ./.github/workflows/reusable-deployment.yml
+      secrets: 
+        k8s-kubeconfig: ${{ secrets.KUBECONFIG }}
+        mongodb-password: ${{ secrets.MONGO_PASSWORD }}
+
 
     prod-integration-test:
       name: Prod Integration test
