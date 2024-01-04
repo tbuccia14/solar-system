@@ -27,6 +27,9 @@ on:
         description: K8s config file
       mongodb-password:
         required: true
+    outputs:
+      application-url:
+        value: ${{ jobs.reusable-deploy.outputs.APP_INGRESS_URL }}
 
 jobs:
     reusable-deploy:
