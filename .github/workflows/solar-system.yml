@@ -177,7 +177,6 @@ jobs:
         k8s-kubeconfig: ${{ secrets.KUBECONFIG }}
         mongodb-password: ${{ secrets.MONGO_PASSWORD }}
 
-
     prod-integration-test:
       name: Prod Integration test
       if: github.ref == 'ref/heads/main'
