@@ -230,3 +230,22 @@ jobs:
             echo $URL
             echo ----------
             curl https://$URL/live -s -q | jq -r .status | grep -i live
+
+    slack-notification:
+      if: always()
+      name: Slack Notification
+      needs: [dev-integration-test, prod-integration-test]
+      continue-on-error: true
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Slack notify
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: github-actions-channel
+            SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: 'Post Content :rocket:'
+            SLACK_TITLE: Information
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
